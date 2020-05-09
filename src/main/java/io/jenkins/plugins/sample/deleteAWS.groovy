@@ -34,7 +34,7 @@ class deleteAWS {
     
 def id; 
 int i;
-def filePath = "./aws";
+def filePath = "/usr/local/bin/aws/";
 def file = new File(filePath)
 def exists = file.exists();
 def awsGet = "/usr/local/bin/aws ec2 describe-instances  --query Reservations[*].Instances[*].{Instance:InstanceId,Name:Tags} --output json".execute().text
@@ -48,7 +48,8 @@ def awsRegion;
 def awsID;
 def awsKey;
 def awsKeyMask;
-
+def system = System.getProperty("os.name").toLowerCase(); //Used to approve aws install if needed
+   
 def deleteNode(def aSlave, excludeArray){
     
           if (excludeArray.contains(aSlave)){
@@ -56,7 +57,7 @@ def deleteNode(def aSlave, excludeArray){
         println("The machine "+aSlave+" has been entered in the exclude list and will not be deleted.")
         delSuccess = false;
              }
-          else if (json.find{it.Name.Value==[[aSlave]]}){
+          else if (json.find{it.Name.Value==[[aSlave]]}){ //While looping json data if that value matches the slave name passed through
               
                     println ("=====================================================")
                           id = json.find{it.Name.Value==[[aSlave]]}.Instance     
@@ -83,17 +84,20 @@ def deleteNode(def aSlave, excludeArray){
                        return delSuccess;
 }
 
+    	def isUnix() { //Used to validate whether to run install script.
+
+		return (system.indexOf("nix") >= 0 || system.indexOf("nux") >= 0 || system.indexOf("aix") > 0 );
+
+	}
 
 
 def selection(exclude,cloudType,deleteType,deleteLabel,vmCount,awsID,awsKey,awsRegion){
   
        if (awsKey) {
-       awsKeyMask = awsKey.replaceAll(".+","${awsKey.charAt(0)}${awsKey.charAt(1)}*********");
+       awsKeyMask = awsKey.replaceAll(".+","${awsKey.charAt(0)}${awsKey.charAt(1)}*********"); //Replace all characters apart from the first two with *'s for security
        }
 
-     
-
-
+    def isUnix = isUnix()
     excludeArray= exclude.split(',')
  
  println("If you would like the script to install AWS CLI itself please ensure that Jenkins has sufficent Sudo permissions to install Amazon CLI without a password. Please also insure your configuration variables have been set." + "\n");
@@ -102,38 +106,19 @@ def selection(exclude,cloudType,deleteType,deleteLabel,vmCount,awsID,awsKey,awsR
     println ("Bestellen has found an instance of Amazon CLI already installed on the server" + "\n")
         }
 
-else {
+else if(isUnix){
 println("Installing AWS CLI now with ID: ${awsID}. Key: ${awsKeyMask} Region: ${awsRegion}")
-    //Include WITH credentials 
-   // Define cURL process with correct arguments.
-def proc = "curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip"
-           .execute()
-// cURL uses error output stream for progress output.
-Thread.start { System.err << proc.err } 
-// Wait until cURL process finished and continue with the loop.
-proc.waitFor()
-
-def proc2 = "unzip -o awscliv2.zip".execute()
-// cURL uses error output stream for progress output.
-Thread.start { System.err << proc2.err } 
-// Wait until cURL process finished and continue with the loop.
-proc2.waitFor()
-
-def proc3 = "sudo ./aws/install".execute()
-Thread.start { System.err << proc3.err } 
-// Wait until cURL process finished and continue with the loop.
-
-  // Configure AWS Cli
-def proc4 = "aws configure set ${awsRegion}".execute()
-Thread.start { System.err << proc3.err } 
-
+       def String[] installArguments= [awsID,awsKey,awsRegion];
+      
+    File sourceFile = new File("src/main/java/io/jenkins/plugins/sample/installAwsCli.groovy");
+    Class groovyClass = new GroovyClassLoader(getClass().getClassLoader()).parseClass(sourceFile);
+    GroovyObject groovyObj = (GroovyObject) groovyClass.newInstance();
+ 
+    groovyObj.invokeMethod("installCli", installArguments);
             
-def proc5 = "aws configure set aws_access_key_id '${awsID}'".execute()
-Thread.start { System.err << proc3.err } 
-
-            
-def proc6 = "aws configure set aws_secret_access_key '${awsKey}'".execute()
-Thread.start { System.err << proc3.err } 
+}
+else{
+    System.println("It would appear that you are running ${system}. Bestellen only supports automated install on Unix systems. Please install AWS manually.")
 
 }
  

@@ -90,23 +90,23 @@ public class ReturnNodeInfo{
 });
 
 
-Class groovy = classLoader.parseClass(new File("src/main/java/io/jenkins/plugins/sample/getNodes.groovy"));
+Class groovy = classLoader.parseClass(new File("src/main/java/io/jenkins/plugins/sample/callDelete.groovy"));
 GroovyObject groovyObj = (GroovyObject) groovy.getDeclaredConstructor().newInstance();
 
 ByteArrayOutputStream buffer = new ByteArrayOutputStream()  ;
 
 PrintStream saveSystemOut = System.out ;
-final String utf8 = StandardCharsets.UTF_8.name();
+final String utf8 = StandardCharsets.UTF_8.name(); //Sets utf8 to contain the Charset UTF8 to eliminate reliance on code standard.
 System.setOut( new PrintStream ( buffer,true, utf8 )) ;
 
 String[] paramArguments = {exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion};
-Object call = groovyObj.invokeMethod("loopnodes", paramArguments);
-deletionMap = (LinkedHashMap)call;
+Object call = groovyObj.invokeMethod("loopnodes", paramArguments); //Calls loopnodes from CallDelete.groovy and passes parameters.
+deletionMap = (LinkedHashMap)call; //Gets hashmap return of call used for report generation 
 System.setOut( saveSystemOut ) ; 
-deletionMapString = deletionMap.toString();
+deletionMapString = deletionMap.toString(); //Made string to pass back to report generation later set back to map.
 result = buffer.toString( "UTF-8" ).trim() ;
 returnArray.add(result);
 returnArray.add(deletionMapString);
-       return returnArray;
+       return returnArray; //Return array to return both console output and delted machine hashmap values.
     }
 }

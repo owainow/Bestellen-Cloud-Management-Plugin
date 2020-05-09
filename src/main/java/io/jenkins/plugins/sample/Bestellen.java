@@ -194,7 +194,6 @@ public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
             if (goalType.equals("label")){
             if (deleteLabel.length() == 0)
                 return FormValidation.error(Messages.Bestellen_DescriptorImpl_errors_missing());
-            if (deleteLabel.length() < 2)
                 return FormValidation.warning(Messages.Bestellen_DescriptorImpl_warnings_tooShort());
             }
                 return FormValidation.ok();
