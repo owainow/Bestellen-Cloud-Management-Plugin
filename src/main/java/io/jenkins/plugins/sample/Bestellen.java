@@ -26,44 +26,43 @@ import org.kohsuke.stapler.DataBoundSetter;
 public class Bestellen extends Builder implements SimpleBuildStep {
 
     private final String exclude;
-    public String [] excludeArray;
-    public String deleteType;
-    public String acloudType;
-    public String adeleteLabel;
-    public String agenReport;
+    public  String [] excludeArray;
+    public final String deleteType;
+    public final String cloudType;
+    public final String deleteLabel;
+    public final String genReport;
     public Object nodeinfo;
-    public String test;
     public String excludeString;
     public String getNodeinfo;
     public String getReportResult;
-    public String avmCount;
+    public final String vmCount;
     private  List excludeList;
     public List<String> returnArray = new ArrayList<>();
-    public String afetchAPI;
-    public String aapiPassword;
-    public String aapiUsername;
-    public String ajsonName;
-    public String ajsonDeleteParam;
+    public final String fetchAPI;
+    public String apiPassword;
+    public final String apiUsername;
+    public final String jsonName;
+    public final String jsonDeleteParam;
     public String getTitle;
     public Object newReport;
     public String deleteVMString;
-    public String awsID;
+    public final String awsID;
     public String awsKey;
-    public String awsRegion;
+    public final String awsRegion;
     
     @DataBoundConstructor
     public Bestellen(String Exclude, String goalType, String cloudType,String reportType, String deleteLabel, String vmCount, String fetchAPI,String apiUsername, String apiPassword,String jsonName, String jsonDeleteParam,String awsID,String awsKey,String awsRegion) {
         this.exclude = Exclude;
         this.deleteType=goalType;
-        this.acloudType=cloudType;
-        this.adeleteLabel = deleteLabel;
-        this.avmCount=vmCount;
-        this.afetchAPI=fetchAPI;
-        this.aapiPassword=apiPassword;
-        this.aapiUsername=apiUsername;
-        this.ajsonName=jsonName;
-        this.ajsonDeleteParam=jsonDeleteParam;
-        this.agenReport=reportType;
+        this.cloudType=cloudType;
+        this.deleteLabel = deleteLabel;
+        this.vmCount=vmCount;
+        this.fetchAPI=fetchAPI;
+        this.apiPassword=apiPassword;
+        this.apiUsername=apiUsername;
+        this.jsonName=jsonName;
+        this.jsonDeleteParam=jsonDeleteParam;
+        this.genReport=reportType;
         this.awsID=awsID;
         this.awsKey=awsKey;
         this.awsRegion=awsRegion;
@@ -79,13 +78,13 @@ public class Bestellen extends Builder implements SimpleBuildStep {
    
     
     
-    public class Nodelist extends GetAgents {
-        public Nodelist(String Exclude, String goalType, String acloudType, String adeleteLabel,String avmCount, String afetchAPI, String aapiUsername,String aapiPassword,String ajsonName, String ajsonDeleteParam,String awsID,String awsKey,String awsRegion) {
-            super(Exclude, goalType, acloudType, adeleteLabel,avmCount,afetchAPI,aapiUsername,aapiPassword,ajsonName,ajsonDeleteParam,awsID,awsKey,awsRegion);
+    public class Nodelist extends ReturnNodeInfo {
+        public Nodelist(String Exclude, String goalType, String cloudType, String deleteLabel,String vmCount, String fetchAPI, String apiUsername,String apiPassword,String jsonName, String jsonDeleteParam,String awsID,String awsKey,String awsRegion) {
+            super(Exclude, goalType, cloudType, deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion);
         }
        
     public List<String> getnodes(String args) throws Exception  {
-    returnArray = new GetAgents(exclude,acloudType,deleteType,adeleteLabel,avmCount,afetchAPI,aapiUsername,aapiPassword,ajsonName,ajsonDeleteParam,awsID,awsKey,awsRegion).setnodelocation(result); 
+    returnArray = new ReturnNodeInfo(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion).setnodelocation(result); 
     getNodeinfo = returnArray.get(0);
     deleteVMString = returnArray.get(1);
         return returnArray;
@@ -93,11 +92,11 @@ public class Bestellen extends Builder implements SimpleBuildStep {
     }
    
      public class Reports extends GenerateReport {
-        public Reports(String Exclude, String goalType, String acloudType, String adeleteLabel,String avmCount, String afetchAPI,String ajsonName, String ajsonDeleteParam,String deleteVMString) {
-            super(Exclude, goalType, acloudType, adeleteLabel,avmCount,afetchAPI,ajsonName,ajsonDeleteParam,deleteVMString);
+        public Reports(String Exclude, String goalType, String cloudType, String deleteLabel,String vmCount, String fetchAPI,String jsonName, String jsonDeleteParam,String deleteVMString) {
+            super(Exclude, goalType, cloudType, deleteLabel,vmCount,fetchAPI,jsonName,jsonDeleteParam,deleteVMString);
         }
     public String generateaReport(String args) throws BadElementException, IOException{
-        newReport= new GenerateReport(exclude,acloudType,deleteType,adeleteLabel,avmCount,afetchAPI,ajsonName,ajsonDeleteParam,deleteVMString).runReport(title);
+        newReport= new GenerateReport(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,jsonName,jsonDeleteParam,deleteVMString).runReport(title);
         getTitle = newReport.toString();
         return getTitle;
     } 
@@ -115,10 +114,10 @@ public class Bestellen extends Builder implements SimpleBuildStep {
 
     public void perform (Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
      
-        listener.getLogger().println("Cloud type has been set too: " + acloudType.toUpperCase() );
+        listener.getLogger().println("Cloud type has been set too: " + cloudType.toUpperCase() );
 
         listener.getLogger().println("Deletion Type for this run is set too: " + deleteType.toUpperCase() );
-     if(acloudType.equals("ec2")){
+     if(cloudType.equals("ec2")){
         if(!awsID.isEmpty()){
           listener.getLogger().println("AWS ID: " + awsID);
         }
@@ -131,22 +130,22 @@ public class Bestellen extends Builder implements SimpleBuildStep {
             listener.getLogger().println("AWS Region: " + awsRegion);
         }
      }
-     if(acloudType.equals("custom")){
-        if(!aapiUsername.isEmpty()){
-          listener.getLogger().println("API Username: " + aapiUsername);
+     if(cloudType.equals("custom")){
+        if(!apiUsername.isEmpty()){
+          listener.getLogger().println("API Username: " + apiUsername);
         }
-        if( !aapiPassword.isEmpty()){
+        if( !apiPassword.isEmpty()){
           
             listener.getLogger().println("API Password has been set.");
         }
      }
          if (deleteType.equals("efficient")){
-          listener.getLogger().println("Deletion amount has been set to: " + avmCount );
+          listener.getLogger().println("Deletion amount has been set to: " + vmCount );
       }
           if (deleteType .equals("label")){
-          listener.getLogger().println("Delete label has been set too: " + adeleteLabel );
+          listener.getLogger().println("Delete label has been set too: " + deleteLabel );
       }
-        if (agenReport.equals("true")) {
+        if (genReport.equals("true")) {
             listener.getLogger().println("Generating report option has been checked so a report will be generated at the conclusion of this run.");
         } else {
             listener.getLogger().println("Report generating is set to OFF for this run. A report will not be generated although results can stilll be viewed in the output." );
@@ -157,17 +156,17 @@ public class Bestellen extends Builder implements SimpleBuildStep {
           listener.getLogger().println("Lists of Machines Excluded from this Scan: " + exclude );
        
         try {
-            new Nodelist(exclude,acloudType,deleteType,adeleteLabel,avmCount,afetchAPI,aapiUsername,aapiPassword,ajsonName,ajsonDeleteParam,awsID,awsKey,awsRegion).getnodes(getNodeinfo);
+            new Nodelist(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion).getnodes(getNodeinfo);
         } catch (Exception ex) {
             Logger.getLogger(Bestellen.class.getName()).log(Level.SEVERE, "Failed to generate nodelist. Groovy scripts have failed. Please check your configuration", ex);
         }
         
          listener.getLogger().println("Lists of nodes found: " + "\n" + getNodeinfo );
        
-         if (agenReport.equals("true")) {
+         if (genReport.equals("true")) {
              try{
                  listener.getLogger().println("\nNow generating a PDF for this run.");
-                 new Reports(exclude,acloudType,deleteType,adeleteLabel,avmCount,afetchAPI,ajsonName,ajsonDeleteParam,deleteVMString).generateaReport(getTitle);
+                 new Reports(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,jsonName,jsonDeleteParam,deleteVMString).generateaReport(getTitle);
              }
              catch (Exception ex) {
             Logger.getLogger(Bestellen.class.getName()).log(Level.SEVERE, "Failed to generate report.", ex);
@@ -195,7 +194,7 @@ public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
             if (goalType.equals("label")){
             if (deleteLabel.length() == 0)
                 return FormValidation.error(Messages.Bestellen_DescriptorImpl_errors_missing());
-            if (deleteLabel.length() < 1)
+            if (deleteLabel.length() < 2)
                 return FormValidation.warning(Messages.Bestellen_DescriptorImpl_warnings_tooShort());
             }
                 return FormValidation.ok();

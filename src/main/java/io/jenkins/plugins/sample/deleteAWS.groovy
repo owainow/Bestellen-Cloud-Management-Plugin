@@ -85,7 +85,7 @@ def deleteNode(def aSlave, excludeArray){
 
 
 
-def selection(def exclude, def cloudType , def deleteType, def deleteLabel, def vmCount,awsID,awsKey,awsRegion){
+def selection(exclude,cloudType,deleteType,deleteLabel,vmCount,awsID,awsKey,awsRegion){
   
        if (awsKey) {
        awsKeyMask = awsKey.replaceAll(".+","${awsKey.charAt(0)}${awsKey.charAt(1)}*********");

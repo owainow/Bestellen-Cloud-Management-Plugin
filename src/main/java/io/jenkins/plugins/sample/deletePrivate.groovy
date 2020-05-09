@@ -45,7 +45,6 @@ def jsonDeleteParam;
 def aSlave;
 def json;
 def fetchAPI;
-    //  json =  new groovy.json.JsonSlurper().parseText(fetchNodes)
 def parsedJson;
 def slaveList = [];
 def slave;
@@ -113,7 +112,7 @@ if (!apiPassword.isEmpty()){
 
 
 
-def selection(def exclude, def cloudType , def deleteType, def deleteLabel, def vmCount,def fetchAPI,def apiUsername,def apiPassword,def jsonName, def jsonDeleteParam){
+def selection(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam){
 
    excludeArray= exclude.split(',')
    def fetchNodes = "curl ${fetchAPI}".execute().text
@@ -161,7 +160,7 @@ def selection(def exclude, def cloudType , def deleteType, def deleteLabel, def 
                      slaveList.add(aSlave.name)
                 }
               }
-                  println('================================================================= ')
+                             println('================================================================= ')
                              println("Starting to delete the slaves that are currently offline.")
                              println('================================================================= ')
                  newvmCount = deleteNode(excludeArray,jsonName,jsonDeleteParam,json,fetchAPI,deleteType,originalvmCount,apiUsername,apiPassword)

@@ -15,10 +15,10 @@
     
                 <f:entry name="cloudType" title="Choose Cloud" field="cloudType">
        <select name="cloudType">
-    <option value="azure">Azure</option>
+    <option disabled="true" value="azure">Azure</option>
     <option value="ec2">Amazon EC2</option>
-      <option value="google">Google Cloud</option>
-        <option value="ibm">IBM Cloud</option>
+      <option disabled ="true" value="google">Google Cloud</option>
+        <option disabled ="true" value="ibm">IBM Cloud </option>
         <option value="custom">Custom REST API</option>
       </select>
     </f:entry>
@@ -52,7 +52,7 @@
             <f:textbox />
              </f:entry>
              
-             <f:entry title="${%apiPassword}">
+             <f:entry title="${%apiPassword}" description = "${apiPasswordDescr}">
              <f:password field="apiPassword" >
                </f:password>
              </f:entry>
@@ -97,7 +97,7 @@
             <f:textbox />
              </f:entry>
              
-             <f:entry title="${%awsKey}">
+             <f:entry title="${%awsKey}" description = "${awsKeyDescr}">
              <f:password field="awsKey" >
                </f:password>
              </f:entry>
