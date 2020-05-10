@@ -26,6 +26,7 @@ package io.jenkins.plugins.sample;
 
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
+import hudson.FilePath;
 import java.io.File;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -62,10 +63,11 @@ public class ReturnNodeInfo{
     public String awsID;
     public String awsKey;
     public String awsRegion;
+    public FilePath workspace;
 
     
    
-    public ReturnNodeInfo(String Exclude,String CloudType, String GoalType,String deleteLabel,String vmCount,String fetchAPI,String apiUsername,String apiPassword,String jsonName,String jsonDeleteParam,String awsID,String awsKey,String awsRegion)  {
+    public ReturnNodeInfo(String Exclude,String CloudType, String GoalType,String deleteLabel,String vmCount,String fetchAPI,String apiUsername,String apiPassword,String jsonName,String jsonDeleteParam,String awsID,String awsKey,String awsRegion,FilePath workspace)  {
         this.exclude = Exclude;
         this.cloudType=CloudType;
         this.deleteType=GoalType;
@@ -79,6 +81,7 @@ public class ReturnNodeInfo{
         this.awsID=awsID;
         this.awsKey=awsKey;
         this.awsRegion=awsRegion;
+        this.workspace=workspace;
     }
 
     
@@ -98,8 +101,8 @@ ByteArrayOutputStream buffer = new ByteArrayOutputStream()  ;
 PrintStream saveSystemOut = System.out ;
 final String utf8 = StandardCharsets.UTF_8.name(); //Sets utf8 to contain the Charset UTF8 to eliminate reliance on code standard.
 System.setOut( new PrintStream ( buffer,true, utf8 )) ;
-
-String[] paramArguments = {exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion};
+String workspaceString = workspace.toString();
+String[] paramArguments = {exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspaceString};
 Object call = groovyObj.invokeMethod("loopnodes", paramArguments); //Calls loopnodes from CallDelete.groovy and passes parameters.
 deletionMap = (LinkedHashMap)call; //Gets hashmap return of call used for report generation 
 System.setOut( saveSystemOut ) ; 

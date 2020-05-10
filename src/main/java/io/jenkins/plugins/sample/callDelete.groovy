@@ -43,8 +43,9 @@ class GetNodes {
     def awsID
     def awsKey
     def awsRegion
+    def workspace;
 
-def loopnodes(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion){
+def loopnodes(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace){
     
   println('==================== Printing ALL SYSTEM SLAVES ====================');
 
@@ -63,8 +64,12 @@ def loopnodes(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsern
    println('\tcomputer.isOffline: ' + aSlave.getComputer().isOffline());
      println('================================================================== ');
      
-
      }
+    File groovySource = new File("src/main/java/io/jenkins/plugins/sample/moveReports.groovy");
+    Class groovyMove = new GroovyClassLoader(getClass().getClassLoader()).parseClass(groovySource);
+    GroovyObject groovyObjMove = (GroovyObject) groovyMove.newInstance();
+ 
+    groovyObjMove.invokeMethod("moveReportsGroovy",workspace);
      
    if (cloudType == "ec2"){
        def String[] AWSparamArguments = [exclude,cloudType,deleteType,deleteLabel,vmCount,awsID,awsKey,awsRegion];

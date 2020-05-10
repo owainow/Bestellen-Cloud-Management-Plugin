@@ -1,6 +1,7 @@
 package io.jenkins.plugins.sample;
 
 import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.DocumentException;
 import hudson.Launcher;
 import hudson.Extension;
 import hudson.FilePath;
@@ -14,6 +15,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,16 +77,16 @@ public class Bestellen extends Builder implements SimpleBuildStep {
     excludeArray = exclude.split(",");
         return excludeArray;
     }
-   
-    
+   //add workspace to file path for return node info
+    //call groovy script to move files from old folder to new folder.
     
     public class Nodelist extends ReturnNodeInfo {
-        public Nodelist(String Exclude, String goalType, String cloudType, String deleteLabel,String vmCount, String fetchAPI, String apiUsername,String apiPassword,String jsonName, String jsonDeleteParam,String awsID,String awsKey,String awsRegion) {
-            super(Exclude, goalType, cloudType, deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion);
+        public Nodelist(String Exclude, String goalType, String cloudType, String deleteLabel,String vmCount, String fetchAPI, String apiUsername,String apiPassword,String jsonName, String jsonDeleteParam,String awsID,String awsKey,String awsRegion,FilePath workspace) {
+            super(Exclude, goalType, cloudType, deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace);
         }
        
     public List<String> getnodes(String args) throws Exception  {
-    returnArray = new ReturnNodeInfo(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion).setnodelocation(result); 
+    returnArray = new ReturnNodeInfo(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace).setnodelocation(result); 
     getNodeinfo = returnArray.get(0);
     deleteVMString = returnArray.get(1);
         return returnArray;
@@ -92,11 +94,11 @@ public class Bestellen extends Builder implements SimpleBuildStep {
     }
    
      public class Reports extends GenerateReport {
-        public Reports(String Exclude, String goalType, String cloudType, String deleteLabel,String vmCount, String fetchAPI,String jsonName, String jsonDeleteParam,String deleteVMString) {
-            super(Exclude, goalType, cloudType, deleteLabel,vmCount,fetchAPI,jsonName,jsonDeleteParam,deleteVMString);
+        public Reports(String Exclude, String goalType, String cloudType, String deleteLabel,String vmCount, String fetchAPI,String jsonName, String jsonDeleteParam,String deleteVMString,FilePath workspace) {
+            super(Exclude, goalType, cloudType, deleteLabel,vmCount,fetchAPI,jsonName,jsonDeleteParam,deleteVMString,workspace);
         }
-    public String generateaReport(String args) throws BadElementException, IOException{
-        newReport= new GenerateReport(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,jsonName,jsonDeleteParam,deleteVMString).runReport(title);
+    public String generateaReport(String args) throws BadElementException, IOException, InstantiationException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, DocumentException{
+        newReport= new GenerateReport(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,jsonName,jsonDeleteParam,deleteVMString,workspace).runReport(title);
         getTitle = newReport.toString();
         return getTitle;
     } 
@@ -115,6 +117,7 @@ public class Bestellen extends Builder implements SimpleBuildStep {
     public void perform (Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
      
         listener.getLogger().println("Cloud type has been set too: " + cloudType.toUpperCase() );
+        
 
         listener.getLogger().println("Deletion Type for this run is set too: " + deleteType.toUpperCase() );
      if(cloudType.equals("ec2")){
@@ -156,7 +159,7 @@ public class Bestellen extends Builder implements SimpleBuildStep {
           listener.getLogger().println("Lists of Machines Excluded from this Scan: " + exclude );
        
         try {
-            new Nodelist(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion).getnodes(getNodeinfo);
+            new Nodelist(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace).getnodes(getNodeinfo);
         } catch (Exception ex) {
             Logger.getLogger(Bestellen.class.getName()).log(Level.SEVERE, "Failed to generate nodelist. Groovy scripts have failed. Please check your configuration", ex);
         }
@@ -166,7 +169,7 @@ public class Bestellen extends Builder implements SimpleBuildStep {
          if (genReport.equals("true")) {
              try{
                  listener.getLogger().println("\nNow generating a PDF for this run.");
-                 new Reports(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,jsonName,jsonDeleteParam,deleteVMString).generateaReport(getTitle);
+                 new Reports(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,jsonName,jsonDeleteParam,deleteVMString,workspace).generateaReport(getTitle);
              }
              catch (Exception ex) {
             Logger.getLogger(Bestellen.class.getName()).log(Level.SEVERE, "Failed to generate report.", ex);

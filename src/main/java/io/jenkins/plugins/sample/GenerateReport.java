@@ -38,6 +38,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.FilePath;
 import java.awt.Font;
 import java.io.File;
 
@@ -74,11 +75,12 @@ public class GenerateReport {
     public int deleteNumber;
     public int previousdeleteNumber;
     public int deleteDifference;
+    public FilePath workspace;
  
  
 
 
-  public GenerateReport(String Exclude,String CloudType, String GoalType,String deleteLabel,String vmCount,String fetchAPI,String jsonName,String jsonDeleteParam,String deleteVMString){
+  public GenerateReport(String Exclude,String CloudType, String GoalType,String deleteLabel,String vmCount,String fetchAPI,String jsonName,String jsonDeleteParam,String deleteVMString,FilePath workspace){
         this.exclude = Exclude.toUpperCase();
         this.acloudType=CloudType.toUpperCase();
         this.deleteType=GoalType.toUpperCase();
@@ -88,22 +90,43 @@ public class GenerateReport {
         this.ajsonName=jsonName.toUpperCase();
         this.ajsonDeleteParam=jsonDeleteParam.toUpperCase();
         this.adeleteVMString=deleteVMString.toUpperCase();
+        this.workspace=workspace;
         
 }
-   public String runReport(String args) throws BadElementException, IOException {
-        GenerateReport programm = new GenerateReport(exclude,acloudType,deleteType,adeleteLabel,avmCount,afetchAPI,ajsonName,ajsonDeleteParam,adeleteVMString);
+   public String runReport(String args) throws BadElementException, IOException, DocumentException {
+        GenerateReport programm = new GenerateReport(exclude,acloudType,deleteType,adeleteLabel,avmCount,afetchAPI,ajsonName,ajsonDeleteParam,adeleteVMString,workspace);
         args = programm.start();
         return args;
                
     }
 
 
- public String start() throws BadElementException, IOException {
-    
+ public String start() throws BadElementException, IOException, DocumentException {
+       String workspaceString = workspace.toString();
+       
+  File newReportDirectory = new File (workspaceString+"/latestReport");
+  File previousReportDirectory = new File(workspaceString+"/previousReports/");
+   File[] content = newReportDirectory.listFiles();
+if(newReportDirectory.isDirectory()) {
+           for (File content1 : content) {
+               boolean success = content1.renameTo(new File(previousReportDirectory, content1.getName()));
+               if (!success) {
+                   System.out.print("not good");
+               }
+           }
+}
+       
+       
+       
        Document document = new Document();
        LocalDateTime runDateTime = LocalDateTime.now();
        DateTimeFormatter formatting = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
        String formattedDate = runDateTime.format(formatting);
+  
+        title = "Bestellen_"+formattedDate;
+       String FILE_NAME = newReportDirectory+"/"+title;
+      
+       
       adeleteVMString  = adeleteVMString.substring(1, adeleteVMString.length()-1); //Remove brackets from string.
        String[] keyValuePairs = adeleteVMString.split(",");              //split the string to creat key-value pairs
        Map<String,String> machines = new HashMap<>();               
@@ -128,7 +151,7 @@ public class GenerateReport {
        
       try
       {
-         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Bestellen_"+formattedDate+".pdf"));
+         PdfWriter writer =  PdfWriter.getInstance(document, new FileOutputStream(new File(FILE_NAME)));
          document.open();
          
         com.itextpdf.text.Font heading1 = FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLD, new CMYKColor(60, 40, 40, 100));
