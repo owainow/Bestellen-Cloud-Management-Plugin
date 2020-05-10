@@ -12,7 +12,7 @@
     <version>1</version>
     <packaging>hpi</packaging>
     <properties>
-        <jenkins.version>2.164.1</jenkins.version>
+        <jenkins.version>2.221</jenkins.version>
         <java.level>8</java.level>
     </properties>
     <name>Bestellen</name>
@@ -22,14 +22,16 @@
             <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
-    <!-- Assuming you want to host on @jenkinsci:
-    <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+  
+    
+
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+        <connection>scm:git:git://github.com/jenkinsci/Bestellen-Cloud_Management_plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jenkinsci/Bestellen_Cloud_Management-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/Bestellen_Cloud_Management-plugin</url>
+         <tag>HEAD</tag>
     </scm>
-    -->
+   
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
@@ -43,10 +45,32 @@
         </pluginRepository>
     </pluginRepositories>
     <dependencies>
+           <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+        <dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>log4j-over-slf4j</artifactId>
+    <version>1.7.26</version>
+</dependency>
+
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-jdk14</artifactId>
+    <version>1.7.26</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>jcl-over-slf4j</artifactId>
+    <version>1.7.26</version>
+</dependency>
         <dependency>
     <groupId>com.itextpdf</groupId>
     <artifactId>itextpdf</artifactId>
     <version>5.5.13</version>
     </dependency>
     </dependencies>
-</project>
+</project> 
