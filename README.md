@@ -31,7 +31,7 @@ The plugin can be built using:
 ```
 ### Intial setup:
 Very few parameters are required to run the plugin intially. 
-(https://i.ibb.co/Pxdssbh/Screenshot-2020-05-12-at-13-22-31.png)
+![Basic Setup](https://i.ibb.co/Pxdssbh/Screenshot-2020-05-12-at-13-22-31.png)
 
 Exclusion is important however should be used sparingly. It is advised excluded nodes are only machines such as web servers that are not dynamically spun up. 
 
