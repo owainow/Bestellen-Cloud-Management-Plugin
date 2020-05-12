@@ -47,5 +47,5 @@ If report generation has been set to yes it is advisable that you also archive t
 
 
 ### Amazon EC2
-Amazon EC2 uses the return values fromn each to delete to evaluate a successful deletion.
+Amazon EC2 uses the return values from each to delete to evaluate a successful deletion.
 
