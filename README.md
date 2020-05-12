@@ -22,6 +22,8 @@ Bestellen is currently closed for contribution until June. My submission date is
 ### Important:
 Pending import into main JenkinsCI repository. The current repository is: https://github.com/owainow/Bestellen_Cloud_Management_Jenkins_Plugin
 
+The limit to this plugin is that machines are only deleted if the slave names in jenkins match the name in the cloud (Which is good practice anyway).
+
 ## Getting Started:
 To build the plugin, please use Maven 3.3.9 or above, with JDK 8. 
 The plugin can be built using:
@@ -40,6 +42,7 @@ All deletion options except "Offline nodes" require additional information which
 
 ### Report generation
 If report generation has been set to yes it is advisable that you also archive the result using the archive artefact plugin. All reports are saved in the job workspace with the most recent run in the "latestReport" folder and previous runs in the "previousReports". Setup for archiving is below:
+
 ![Archive Setup](https://i.ibb.co/x7qJXWz/Screenshot-2020-05-12-at-13-39-52.png)
 
 
