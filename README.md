@@ -38,7 +38,9 @@ Exclusion is important however should be used sparingly. It is advised excluded 
 All deletion options except "Offline nodes" require additional information which can be entered further down the form. 
 
 
-
+### Report generation
+If report generation has been set to yes it is advisable that you also archive the result using the archive artefact plugin. All reports are saved in the job workspace with the most recent run in the "latestReport" folder and previous runs in the "previousReports". Setup for archiving is below:
+![Archive Setup]https://i.ibb.co/x7qJXWz/Screenshot-2020-05-12-at-13-39-52.png
 
 
 
