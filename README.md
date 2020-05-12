@@ -42,12 +42,15 @@ All deletion options except "Offline nodes" require additional information which
 ### Bestellen Efficiency Calculation
 It is a longer term goal to create a measure to show when a dynamic machine is inefficent (time to connect, cloud size compared to VM size etc) however that involves getting machine hardware details for each machine which greatly increases time to run and ironically the plugins effeicency. As a result the plugin offers a bespoke deletion option to use when along side a call or check on your clouds capacity (if your chosen cloud supports it) that will clear X amount of machines (User specified in config) when ran. The order is as follows. Offline machines -> Idle machines (24 hours) -> Long Connect time Machines (15 minutes).
 
+
+### Amazon EC2
+Amazon EC2 uses the return values from each to delete to evaluate a successful deletion. The EC2 delete uses the aws CLI and will install in on unix systems if not found and will configure with the parameters passed through. If aws CLI is run the plugin assumes it is configured already. 
+
 ### Report generation
 If report generation has been set to yes it is advisable that you also archive the result using the archive artefact plugin. All reports are saved in the job workspace with the most recent run in the "latestReport" folder and previous runs in the "previousReports". Setup for archiving is below:
 
 ![Archive Setup](https://i.ibb.co/x7qJXWz/Screenshot-2020-05-12-at-13-39-52.png)
 
 
-### Amazon EC2
-Amazon EC2 uses the return values from each to delete to evaluate a successful deletion.
+
 
