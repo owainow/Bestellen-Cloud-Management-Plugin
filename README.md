@@ -39,6 +39,8 @@ Exclusion is important however should be used sparingly. It is advised excluded 
 
 All deletion options except "Offline nodes" require additional information which can be entered further down the form. 
 
+### Bestellen Efficiency Calculation
+It is a longer term goal to create a measure to show when a dynamic machine is inefficent (time to connect, cloud size compared to VM size etc) however that involves getting machine hardware details for each machine which greatly increases time to run and ironically the plugins effeicency. As a result the plugin offers a bespoke deletion option to use when along side a call or check on your clouds capacity (if your chosen cloud supports it) that will clear X amount of machines (User specified in config) when ran. The order is as follows. Offline machines -> Idle machines (24 hours) -> Long Connect time Machines (15 minutes).
 
 ### Report generation
 If report generation has been set to yes it is advisable that you also archive the result using the archive artefact plugin. All reports are saved in the job workspace with the most recent run in the "latestReport" folder and previous runs in the "previousReports". Setup for archiving is below:
