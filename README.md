@@ -1,3 +1,4 @@
+
 # Bestellen Cloud Management Plugin
 [![Build Status](https://ci.jenkins.io/job/Plugins/job/veracode-scan-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/veracode-scan-plugin/job/master/)
 [![Jenkins Version](https://img.shields.io/badge/Jenkins-2.20-green.svg?label=min.%20Jenkins)](https://jenkins.io/download/)
@@ -22,17 +23,17 @@ Bestellen is currently closed for contribution until June. My submission date is
 ### Important:
 Pending import into main JenkinsCI repository. The current repository is: https://github.com/owainow/Bestellen_Cloud_Management_Jenkins_Plugin
 
-The limit to this plugin is that machines are only deleted if the slave names in jenkins match the name in the cloud (Which is good practice anyway).
+The limit to this plugin is that machines are only deleted if the slave names in Jenkins match the name in the cloud (Which is good practice anyway).
 
 ## Getting Started:
-To build the plugin, please use Maven 3.3.9 or above, with JDK 8 and Groovy 3.0 or above. 
+To build the plugin, please use Maven 3.3.9 or above, with JDK 8.
 The plugin can be built using:
 
 ```console
 > mvn clean package
 ```
-### Intial setup:
-Very few parameters are required to run the plugin intially. 
+### Initial setup:
+Very few parameters are required to run the plugin initially. 
 ![Basic Setup](https://i.ibb.co/Pxdssbh/Screenshot-2020-05-12-at-13-22-31.png)
 
 Exclusion is important however should be used sparingly. It is advised excluded nodes are only machines such as web servers that are not dynamically spun up. 
@@ -40,7 +41,7 @@ Exclusion is important however should be used sparingly. It is advised excluded 
 All deletion options except "Offline nodes" require additional information which can be entered further down the form. 
 
 ### Bestellen Efficiency Calculation
-It is a longer term goal to create a measure to show when a dynamic machine is inefficent (time to connect, cloud size compared to VM size etc) however that involves getting machine hardware details for each machine which greatly increases time to run and ironically the plugins effeicency. As a result the plugin offers a bespoke deletion option to use when along side a call or check on your clouds capacity (if your chosen cloud supports it) that will clear X amount of machines (User specified in config) when ran. The order is as follows. Offline machines -> Idle machines (24 hours) -> Long Connect time Machines (15 minutes).
+It is a longer-term goal to create a measure to show when a dynamic machine is inefficient (time to connect, cloud size compared to VM size etc) however that involves getting machine hardware details for each machine which greatly increases time to run and ironically the plugins efficiency. As a result the plugin offers a bespoke deletion option to use when along side a call or check on your clouds capacity (if your chosen cloud supports it) that will clear X amount of machines (User specified in config) when ran. The order is as follows. Offline machines -> Idle machines (24 hours) -> Long Connect time Machines (15 minutes).
 
 
 ### Amazon EC2
@@ -50,6 +51,7 @@ Amazon EC2 uses the return values from each to delete to evaluate a successful d
 If report generation has been set to yes it is advisable that you also archive the result using the archive artefact plugin. All reports are saved in the job workspace with the most recent run in the "latestReport" folder and previous runs in the "previousReports". Setup for archiving is below:
 
 ![Archive Setup](https://i.ibb.co/x7qJXWz/Screenshot-2020-05-12-at-13-39-52.png)
+
 
 
 
