@@ -25,7 +25,7 @@ Pending import into main JenkinsCI repository. The current repository is: https:
 The limit to this plugin is that machines are only deleted if the slave names in jenkins match the name in the cloud (Which is good practice anyway).
 
 ## Getting Started:
-To build the plugin, please use Maven 3.3.9 or above, with JDK 8. 
+To build the plugin, please use Maven 3.3.9 or above, with JDK 8 and Groovy 3.0 or above. 
 The plugin can be built using:
 
 ```console
@@ -46,4 +46,6 @@ If report generation has been set to yes it is advisable that you also archive t
 ![Archive Setup](https://i.ibb.co/x7qJXWz/Screenshot-2020-05-12-at-13-39-52.png)
 
 
+### Amazon EC2
+Amazon EC2 uses the return values fromn each to delete to evaluate a successful deletion.
 
