@@ -47,6 +47,8 @@ It is a longer-term goal to create a measure to show when a dynamic machine is i
 ### Amazon EC2
 Amazon EC2 uses the return values from each to delete to evaluate a successful deletion. The EC2 delete uses the aws CLI and will install in on unix systems if not found and will configure with the parameters passed through. If aws CLI is run the plugin assumes it is configured already. 
 
+Currently the code supports single instance creation but not multiple instances that are generated at once.
+
 ### Report generation
 If report generation has been set to yes it is advisable that you also archive the result using the archive artefact plugin. All reports are saved in the job workspace with the most recent run in the "latestReport" folder and previous runs in the "previousReports". Setup for archiving is below:
 
