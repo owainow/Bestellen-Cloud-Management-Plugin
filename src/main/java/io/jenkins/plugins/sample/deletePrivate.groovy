@@ -49,11 +49,17 @@ def parsedJson;
 def slaveList = [];
 def slave;
 int machinesDeleted;
-def deletionMap = [:];
+def deletionMap;
 def safeType;
+
 
  
 def deleteNode(excludeArray,jsonName,jsonDeleteParam,json,fetchAPI,deleteType,originalvmCount,apiUsername,apiPassword,safeType){
+
+ jsonName = "ROOT."+jsonName
+ jsonDeleteParam = "ROOT."+jsonDeleteParam
+
+deletionMap= json.findAll{ Eval.me('ROOT', it, jsonName) in slaveList }.collectEntries{ [Eval.me('ROOT', it, jsonName),Eval.me('ROOT',it, jsonDeleteParam)]  }
 
   for(entry in slaveList){
 
@@ -63,11 +69,11 @@ def deleteNode(excludeArray,jsonName,jsonDeleteParam,json,fetchAPI,deleteType,or
        delSuccess = false;
    }
 
-   else if (json.find{it."$jsonName"==entry} && machinesDeleted < originalvmCount){
+   else if (deletionMap.find{it.key==entry} && machinesDeleted < originalvmCount){
       println ("=====================================================")
      
-                        id = json.find{it."$jsonName"==entry}."$jsonDeleteParam"
-                           deletionMap = deletionMap+[(entry):(id)]
+                        id = deletionMap.find{it.key==entry}.value
+                      
                         println ("Instance Name is: " + entry + " Instance ID is: " + id)
                          println('Removing node from Jenkins...');
             
@@ -114,7 +120,8 @@ def deleteNode(excludeArray,jsonName,jsonDeleteParam,json,fetchAPI,deleteType,or
                        delSuccess = true;
                        machinesDeleted ++;
                        println("Machines delted so far: "+machinesDeleted)
-                       }
+                      }
+      
                        
     else if (machinesDeleted >= originalvmCount){
         println ("=====================================================")
@@ -266,6 +273,7 @@ def selection(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsern
                  
      }
            println("=====================================================") 
+        
             return  deletionMap;
          }
      
