@@ -1,5 +1,5 @@
 package io.jenkins.plugins.sample;
-
+import jenkins.model.Jenkins
 import groovy.json.*
 /*
  * The MIT License
@@ -58,6 +58,8 @@ def deleteNode(excludeArray,jsonName,jsonDeleteParam,json,fetchAPI,deleteType,or
 
  jsonName = "ROOT."+jsonName
  jsonDeleteParam = "ROOT."+jsonDeleteParam
+
+
 
 deletionMap= json.findAll{ Eval.me('ROOT', it, jsonName) in slaveList }.collectEntries{ [Eval.me('ROOT', it, jsonName),Eval.me('ROOT',it, jsonDeleteParam)]  }
 
@@ -126,7 +128,7 @@ deletionMap= json.findAll{ Eval.me('ROOT', it, jsonName) in slaveList }.collectE
     else if (machinesDeleted >= originalvmCount){
         println ("=====================================================")
        println("Slave: " +entry +" will not be deleted as "+machinesDeleted+" machines have already been deleted." )
-        
+        deletionMap.remove(entry)
     }
     
     else {
