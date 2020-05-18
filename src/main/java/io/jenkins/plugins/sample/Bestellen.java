@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jenkins.tasks.SimpleBuildStep;
@@ -51,9 +52,11 @@ public class Bestellen extends Builder implements SimpleBuildStep {
     public final String awsID;
     public String awsKey;
     public final String awsRegion;
+    public final String safeType;
+    
     
     @DataBoundConstructor
-    public Bestellen(String Exclude, String goalType, String cloudType,String reportType, String deleteLabel, String vmCount, String fetchAPI,String apiUsername, String apiPassword,String jsonName, String jsonDeleteParam,String awsID,String awsKey,String awsRegion) {
+    public Bestellen(String Exclude, String goalType, String cloudType,String reportType, String deleteLabel, String vmCount, String fetchAPI,String apiUsername, String apiPassword,String jsonName, String jsonDeleteParam,String awsID,String awsKey,String awsRegion,String safeType) {
         this.exclude = Exclude;
         this.deleteType=goalType;
         this.cloudType=cloudType;
@@ -68,6 +71,8 @@ public class Bestellen extends Builder implements SimpleBuildStep {
         this.awsID=awsID;
         this.awsKey=awsKey;
         this.awsRegion=awsRegion;
+        this.safeType=safeType;
+        
 
     }
 
@@ -81,12 +86,12 @@ public class Bestellen extends Builder implements SimpleBuildStep {
     //call groovy script to move files from old folder to new folder.
     
     public class Nodelist extends ReturnNodeInfo {
-        public Nodelist(String Exclude, String goalType, String cloudType, String deleteLabel,String vmCount, String fetchAPI, String apiUsername,String apiPassword,String jsonName, String jsonDeleteParam,String awsID,String awsKey,String awsRegion,FilePath workspace) {
-            super(Exclude, goalType, cloudType, deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace);
+        public Nodelist(String Exclude, String goalType, String cloudType, String deleteLabel,String vmCount, String fetchAPI, String apiUsername,String apiPassword,String jsonName, String jsonDeleteParam,String awsID,String awsKey,String awsRegion,FilePath workspace,String safeType) {
+            super(Exclude, goalType, cloudType, deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace,safeType);
         }
        
     public List<String> getnodes(String args) throws Exception  {
-    returnArray = new ReturnNodeInfo(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace).setnodelocation(result); 
+    returnArray = new ReturnNodeInfo(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace,safeType).setnodelocation(result); 
     getNodeinfo = returnArray.get(0);
     deleteVMString = returnArray.get(1);
         return returnArray;
@@ -111,13 +116,14 @@ public class Bestellen extends Builder implements SimpleBuildStep {
          return excludeList;
             }
     }
-    
+  
  
 
     public void perform (Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
      
         listener.getLogger().println("Cloud type has been set too: " + cloudType.toUpperCase() );
-        
+     
+        listener.getLogger().println("Delete nodes has been set too: " + safeType.toUpperCase() );
 
         listener.getLogger().println("Deletion Type for this run is set too: " + deleteType.toUpperCase() );
      if(cloudType.equals("ec2")){
@@ -126,7 +132,7 @@ public class Bestellen extends Builder implements SimpleBuildStep {
         }
         if(!awsKey.isEmpty()){
 
-            listener.getLogger().println("AWS Key has been set.");
+            listener.getLogger().println("AWS Key has been set: " + awsKey);
         }
   
         if( !awsRegion.isEmpty()){
@@ -139,7 +145,7 @@ public class Bestellen extends Builder implements SimpleBuildStep {
         }
         if( !apiPassword.isEmpty()){
           
-            listener.getLogger().println("API Password has been set.");
+            listener.getLogger().println("API Password has been set: "+apiPassword);
         }
      }
          if (deleteType.equals("efficient")){
@@ -159,7 +165,7 @@ public class Bestellen extends Builder implements SimpleBuildStep {
           listener.getLogger().println("Lists of Machines Excluded from this Scan: " + exclude );
        
         try {
-            new Nodelist(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace).getnodes(getNodeinfo);
+            new Nodelist(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace,safeType).getnodes(getNodeinfo);
         } catch (Exception ex) {
             Logger.getLogger(Bestellen.class.getName()).log(Level.SEVERE, "Failed to generate nodelist. Groovy scripts have failed. Please check your configuration", ex);
         }
@@ -167,6 +173,7 @@ public class Bestellen extends Builder implements SimpleBuildStep {
          listener.getLogger().println("Lists of nodes found: " + "\n" + getNodeinfo );
        
          if (genReport.equals("true")) {
+      
              try{
                  listener.getLogger().println("\nNow generating a PDF for this run.");
                  new Reports(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,jsonName,jsonDeleteParam,deleteVMString,workspace).generateaReport(getTitle);
@@ -188,19 +195,70 @@ public class Bestellen extends Builder implements SimpleBuildStep {
      
 
 
- @Symbol("greet")
+@Symbol("greet")
     @Extension
 public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
-        public FormValidation checkLabel (@QueryParameter String goalType, @QueryParameter String deleteLabel )
-                throws IOException, ServletException {
-            if (goalType.equals("label")){
-            if (deleteLabel.length() == 0)
-                return FormValidation.error(Messages.Bestellen_DescriptorImpl_errors_missing());
-                return FormValidation.warning(Messages.Bestellen_DescriptorImpl_warnings_tooShort());
-            }
-                return FormValidation.ok();
+        public FormValidation doCheckExclude (@QueryParameter String value) throws IOException, ServletException {
+    
+            if(!value.isEmpty()&&value.length() < 2){
+           
+                return FormValidation.warning(Messages.Bestellen_DescriptorImpl_warnings_tooShortWarning());
+                         }
+            return FormValidation.ok();
         }
+        
+         public FormValidation doCheckFetchAPI (@QueryParameter String value) throws IOException, ServletException {
+   
+             if(!value.isEmpty() && value.length() < 5){
+      
+                return FormValidation.warning(Messages.Bestellen_DescriptorImpl_warnings_tooShortWarning());
+              
+          }
+                
+            return FormValidation.ok();
+        }
+          public FormValidation doCheckJsonName (@QueryParameter String value) throws IOException, ServletException {
+         
+             if( !value.isEmpty() && value.length() < 2){
+           
+                return FormValidation.warning(Messages.Bestellen_DescriptorImpl_warnings_tooShortWarning());
+              
+          }
+            return FormValidation.ok();
+        }
+              public FormValidation doCheckJsonDeleteParam (@QueryParameter String value) throws IOException, ServletException {
+         
+             if( !value.isEmpty() && value.length() < 2){
+           
+                return FormValidation.warning(Messages.Bestellen_DescriptorImpl_warnings_tooShortWarning());
+              
+          }
+            return FormValidation.ok();
+        }
+              
+                public FormValidation doCheckDeleteLabel (@QueryParameter String value) throws IOException, ServletException {
+         
+             if(!value.isEmpty() && value.length() < 2){
+           
+                return FormValidation.warning(Messages.Bestellen_DescriptorImpl_warnings_tooShortWarning());
+              
+          }
+            return FormValidation.ok();
+        }
+    
+               public FormValidation doCheckVmCount (@QueryParameter String value) throws IOException, ServletException {
+         try {
+     Integer.parseInt(value);
+            return FormValidation.ok();
+          }
+         catch (NumberFormatException e) {
+    return FormValidation.error("Please enter a number in this field.");
+  
+  }
+           
+        }
+               
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
