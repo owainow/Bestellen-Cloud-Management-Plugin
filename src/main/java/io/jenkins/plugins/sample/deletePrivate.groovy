@@ -94,9 +94,9 @@ deletionMap= json.findAll{ Eval.me('ROOT', it, jsonName) in slaveList }.collectE
                                    
                                 if(aSlave.name.equals(slave)){
                          aSlave.getComputer().setTemporarilyOffline(true,null); //Set node as offline for saftey 
-                         println("Setting {$slave} to offline for saftey.")
+                         println("Setting ${slave} to offline for saftey.")
                          aSlave.getComputer().doDoDelete(); // Delete the node from Jenkins
-                             println("Jenkins node {$slave} deleted.")
+                             println("Jenkins node ${slave} deleted.")
                              }
                                 }
                      procDelete = "curl -u ${apiUsername}:${apiPassword} -x DELETE  ${fetchAPI}/${id}".execute()
