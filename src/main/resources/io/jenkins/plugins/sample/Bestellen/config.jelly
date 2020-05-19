@@ -13,6 +13,13 @@
       </select>
     </f:entry>
     
+        <f:entry name="safeType" title="Would you like to actually delete machines?" field="safeType">
+       <select name="safeType">
+    <option value="true">Yes</option>
+    <option value="false">No</option>
+      </select>
+    </f:entry>
+    
                 <f:entry name="cloudType" title="Choose Cloud" field="cloudType">
        <select name="cloudType">
     <option disabled="true" value="azure">Azure</option>
@@ -29,7 +36,7 @@
     <option value="offline">Delete Offline Nodes</option>
     <option value="label">Delete by Label</option>
     <option value="busy">Delete Nodes not Accepting Tasks</option>
-    <option value="efficienct"> Delete Nodes based on Bestellen Efficency Calculation (BETA) </option>
+    <option value="efficient"> Delete Nodes based on Bestellen Efficency Calculation (BETA) </option>
       </select>
     </f:entry>
              
@@ -46,10 +53,10 @@
          
              
              
-              <f:entry title="${%apiUsername}" field="apiUsername"
-                 description="${%apiUsernameDescr}">
-                 
-            <f:textbox />
+              <f:entry title="${%apiUsername}"    description="${%apiUsernameDescr}">
+             <f:password field="apiUsername">
+            
+            </f:password>
              </f:entry>
              
              <f:entry title="${%apiPassword}" description = "${apiPasswordDescr}">
@@ -92,9 +99,9 @@
          
     </f:section>
         <f:section title="AWS CLI Auto Install Settings" inline = "true">
-       <f:entry title="${%awsID}" field="awsID"
-                 description="${%awsIDDescr}">
-            <f:textbox />
+       <f:entry title="${%awsID}" description="${%awsIDDescr}">
+         <f:password  field="awsID">
+             </f:password>
              </f:entry>
              
              <f:entry title="${%awsKey}" description = "${awsKeyDescr}">

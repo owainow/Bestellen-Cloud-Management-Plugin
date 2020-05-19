@@ -82,7 +82,7 @@ public class Bestellen extends Builder implements SimpleBuildStep {
     excludeArray = exclude.split(",");
         return excludeArray;
     }
-   //add workspace to file path for return node info
+    //add workspace to file path for return node info
     //call groovy script to move files from old folder to new folder.
     
     public class Nodelist extends ReturnNodeInfo {

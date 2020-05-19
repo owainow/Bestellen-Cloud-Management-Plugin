@@ -45,7 +45,7 @@ class GetNodes {
     def awsRegion
     def workspace;
 
-def loopnodes(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace){
+def loopnodes(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace,safeType){
     
   println('==================== Printing ALL SYSTEM SLAVES ====================');
 
@@ -65,14 +65,14 @@ def loopnodes(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsern
      println('================================================================== ');
      
      }
-    File groovySource = new File("src/main/java/io/jenkins/plugins/sample/moveReports.groovy");
+    File groovySource = new File("src/main/java/io/jenkins/plugins/sample/createReportFolders.groovy"); //Call to create workspace folders
     Class groovyMove = new GroovyClassLoader(getClass().getClassLoader()).parseClass(groovySource);
     GroovyObject groovyObjMove = (GroovyObject) groovyMove.newInstance();
  
     groovyObjMove.invokeMethod("moveReportsGroovy",workspace);
      
    if (cloudType == "ec2"){
-       def String[] AWSparamArguments = [exclude,cloudType,deleteType,deleteLabel,vmCount,awsID,awsKey,awsRegion];
+       def String[] AWSparamArguments = [exclude,cloudType,deleteType,deleteLabel,vmCount,awsID,awsKey,awsRegion,safeType];
        println('==================== Cloud Option has been set to Amazon EC2 ====================');
                 println("Now calling the deleteAWS.groovy Script");
    
@@ -81,7 +81,7 @@ def loopnodes(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsern
     Class groovyClass = new GroovyClassLoader(getClass().getClassLoader()).parseClass(sourceFile);
     GroovyObject groovyObj = (GroovyObject) groovyClass.newInstance();
  
-    groovyObj.invokeMethod("selection", AWSparamArguments);
+    groovyObj.invokeMethod("selection", AWSparamArguments); //Call the aws delete script with the argument array
             
      
    }
@@ -102,12 +102,12 @@ def loopnodes(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsern
                println("Now calling the deleteCustomAPI.groovy Script");
            
              
-    def String[] CustomparamArguments = [exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam];
+    def String[] CustomparamArguments = [exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,safeType];
     File sourceFile = new File("src/main/java/io/jenkins/plugins/sample/deletePrivate.groovy");
     Class groovyClass = new GroovyClassLoader(getClass().getClassLoader()).parseClass(sourceFile);
     GroovyObject groovyObj = (GroovyObject) groovyClass.newInstance();
  
-    groovyObj.invokeMethod("selection", CustomparamArguments);
+    groovyObj.invokeMethod("selection", CustomparamArguments); // Call custom API script with argument array
   
    }
  }

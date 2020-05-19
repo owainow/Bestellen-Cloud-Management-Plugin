@@ -49,6 +49,14 @@ def awsID;
 def awsKey;
 def safeType;
 def system = System.getProperty("os.name").toLowerCase(); //Used to approve aws install if needed
+def key;
+def procDelete;
+def Returnjson;
+def Firstkey;
+def Secondkey;
+def FirstReturnCode;
+def SecondReturnCode;
+def isUnix;
    
 def deleteNode(def slave, excludeArray,safeType){
     
@@ -83,13 +91,13 @@ def deleteNode(def slave, excludeArray,safeType){
                        def procDelete = "/usr/local/bin/aws ec2 terminate-instances --instance-ids ${id} --output json".execute().text
                        def Returnjson = new groovy.json.JsonSlurper().parseText(procDelete)
                     
-                     def key = Returnjson.TerminatingInstances.CurrentState.Code
-                     def Firstkey = Returnjson.TerminatingInstances.CurrentState.Code
-                     def Secondkey = Returnjson.TerminatingInstances.PreviousState.Code
-                     def FirstReturnCode = Firstkey.findAll{it}
-                     def SecondReturnCode = Secondkey.findAll{it}
+                      key = Returnjson.TerminatingInstances.CurrentState.Code
+                     Firstkey = Returnjson.TerminatingInstances.CurrentState.Code
+                     Secondkey = Returnjson.TerminatingInstances.PreviousState.Code
+                     FirstReturnCode = Firstkey.findAll{it}
+                     SecondReturnCode = Secondkey.findAll{it}
                
-                   
+                   //This block checks the JSON returned by Amazon to see whether the machine was already in a terminated state as they can remain for up to 24 hours.
                    if (FirstReturnCode == [32] || [48] && SecondReturnCode != [48]){ //48 = Terminated and 32 = Shutting down
                                println("AWS reports the machine has been successfuly terminated.")
                                 delSuccess = true;
@@ -118,12 +126,14 @@ def deleteNode(def slave, excludeArray,safeType){
                                    println("It does meet the deletion requirements however is unable to be deleted")
                             println("It is possible that this is an Orpaned VM and requires manual investigation.")
                            delSuccess = false;
+                           s
                        }
                        return delSuccess;
 
-}
+               }
 
-    	def isUnix() { //Used to validate whether to run install script.
+    
+ def isUnix() { //Used to validate whether to run install script as install script only supported on UNIX Machines (Jenkins pretty much always hosted on unix but needs to be checked).
 
 		return (system.indexOf("nix") >= 0 || system.indexOf("nux") >= 0 || system.indexOf("aix") > 0 );
 
@@ -131,11 +141,14 @@ def deleteNode(def slave, excludeArray,safeType){
 
 
 def selection(exclude,cloudType,deleteType,deleteLabel,vmCount,awsID,awsKey,awsRegion,safeType){
-  if (vmCount == null){
-        vmCount = Integer.MAX_Value
-  }
-    def isUnix = isUnix()
+    
     excludeArray= exclude.split(',')
+       
+  if (vmCount == null){
+        vmCount = Integer.MAX_Value //If VM count has not been passed the script sets it delete as many as it finds.
+  }
+  //Below checks whether AWSCLI needs to be installed or not and if so calls install.
+    isUnix = isUnix()
  
  println("If you would like the script to install AWS CLI itself please ensure that Jenkins has sufficent Sudo permissions to install Amazon CLI without a password. Please also insure your configuration variables have been set." + "\n");
 
@@ -147,7 +160,7 @@ else if(isUnix){
 println("Installing AWS CLI now with ID: ${awsID}. Key: ${awsKey} Region: ${awsRegion}")
        def String[] installArguments= [awsID,awsKey,awsRegion];
       
-    File sourceFile = new File("src/main/java/io/jenkins/plugins/sample/installAwsCli.groovy");
+    File sourceFile = new File("src/main/java/io/jenkins/plugins/sample/installAWSCli.groovy");
     Class groovyClass = new GroovyClassLoader(getClass().getClassLoader()).parseClass(sourceFile);
     GroovyObject groovyObj = (GroovyObject) groovyClass.newInstance();
  

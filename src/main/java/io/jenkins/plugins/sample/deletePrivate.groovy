@@ -34,6 +34,7 @@ class deletePrivate {
     
 def id; 
 int i;
+def kush;
 def delSuccess;
 def exclude;
 def excludeArray;
@@ -51,7 +52,8 @@ def slave;
 int machinesDeleted;
 def deletionMap;
 def safeType;
-
+def procDelete;
+def fetchNodes;
 
  
 def deleteNode(excludeArray,jsonName,jsonDeleteParam,json,fetchAPI,deleteType,originalvmCount,apiUsername,apiPassword,safeType){
@@ -60,7 +62,8 @@ def deleteNode(excludeArray,jsonName,jsonDeleteParam,json,fetchAPI,deleteType,or
  jsonDeleteParam = "ROOT."+jsonDeleteParam
 
 
-
+//This is the line to support multi-level JSON. All machines are matched according to the user input in this one succicnt line. 
+//Without this multi-level json such as machine.data.name would not be supported as groovy passes it as one.
 deletionMap= json.findAll{ Eval.me('ROOT', it, jsonName) in slaveList }.collectEntries{ [Eval.me('ROOT', it, jsonName),Eval.me('ROOT',it, jsonDeleteParam)]  }
 
   for(entry in slaveList){
@@ -78,8 +81,11 @@ deletionMap= json.findAll{ Eval.me('ROOT', it, jsonName) in slaveList }.collectE
                       
                         println ("Instance Name is: " + entry + " Instance ID is: " + id)
                          println('Removing node from Jenkins...');
+                         
+                
+                
             
-               if (apiUsername && apiPassword){
+               if (apiUsername && apiPassword){ //IF Credentials are passed through use them
                    
                       println ("Now running curl -u ${apiUsername}:${apiPassword} -x DELETE ${fetchAPI}/${id}");
                       
@@ -93,12 +99,14 @@ deletionMap= json.findAll{ Eval.me('ROOT', it, jsonName) in slaveList }.collectE
                              println("Jenkins node {$slave} deleted.")
                              }
                                 }
-                     def procDelete = "curl -u ${apiUsername}:${apiPassword} -x DELETE  ${fetchAPI}/${id}".execute()
+                     procDelete = "curl -u ${apiUsername}:${apiPassword} -x DELETE  ${fetchAPI}/${id}".execute()
                      returnJson = new JsonSlurper().parseText(procDelete.text)
                      println(returnJson)
                         }
                       }
-                 else{
+                      
+                
+                 else{ //else do call without credentials
                   println ("Now running curl -x DELETE " +fetchAPI+"/"+id);
      
                         if (safeType == "true"){
@@ -111,7 +119,7 @@ deletionMap= json.findAll{ Eval.me('ROOT', it, jsonName) in slaveList }.collectE
                              println("Jenkins node {$slave} deleted.")
                              }
                                 }
-                       def procDelete = "curl -x DELETE ${fetchAPI}/${id}".execute().text
+                        procDelete = "curl -x DELETE ${fetchAPI}/${id}".execute().text
                         returnJson = new JsonSlurper().parseText(procDelete)
                         println(returnJson)
                         }
@@ -128,7 +136,7 @@ deletionMap= json.findAll{ Eval.me('ROOT', it, jsonName) in slaveList }.collectE
     else if (machinesDeleted >= originalvmCount){
         println ("=====================================================")
        println("Slave: " +entry +" will not be deleted as "+machinesDeleted+" machines have already been deleted." )
-        deletionMap.remove(entry)
+        deletionMap.remove(entry) // This removes the matched VM show it does not show in the report as being deleted as it has not been.
     }
     
     else {
@@ -153,7 +161,7 @@ def selection(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsern
       vmCount = Integer.MAX_Value
   }
    excludeArray= exclude.split(',')
-   def fetchNodes = "curl ${fetchAPI}".execute().text
+    fetchNodes = "curl ${fetchAPI}".execute().text
    json = new groovy.json.JsonSlurper().parseText(fetchNodes)
 
           

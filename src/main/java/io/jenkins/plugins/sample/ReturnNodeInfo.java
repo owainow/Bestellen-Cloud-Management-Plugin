@@ -64,10 +64,11 @@ public class ReturnNodeInfo{
     public String awsKey;
     public String awsRegion;
     public FilePath workspace;
+    public String safeType;
 
     
    
-    public ReturnNodeInfo(String Exclude,String CloudType, String GoalType,String deleteLabel,String vmCount,String fetchAPI,String apiUsername,String apiPassword,String jsonName,String jsonDeleteParam,String awsID,String awsKey,String awsRegion,FilePath workspace)  {
+    public ReturnNodeInfo(String Exclude,String CloudType, String GoalType,String deleteLabel,String vmCount,String fetchAPI,String apiUsername,String apiPassword,String jsonName,String jsonDeleteParam,String awsID,String awsKey,String awsRegion,FilePath workspace,String safeType)  {
         this.exclude = Exclude;
         this.cloudType=CloudType;
         this.deleteType=GoalType;
@@ -82,6 +83,7 @@ public class ReturnNodeInfo{
         this.awsKey=awsKey;
         this.awsRegion=awsRegion;
         this.workspace=workspace;
+        this.safeType=safeType;
     }
 
     
@@ -102,12 +104,16 @@ PrintStream saveSystemOut = System.out ;
 final String utf8 = StandardCharsets.UTF_8.name(); //Sets utf8 to contain the Charset UTF8 to eliminate reliance on code standard.
 System.setOut( new PrintStream ( buffer,true, utf8 )) ;
 String workspaceString = workspace.toString();
-String[] paramArguments = {exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspaceString};
+String[] paramArguments = {exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspaceString,safeType};
+
+
 Object call = groovyObj.invokeMethod("loopnodes", paramArguments); //Calls loopnodes from CallDelete.groovy and passes parameters.
 deletionMap = (LinkedHashMap)call; //Gets hashmap return of call used for report generation 
 System.setOut( saveSystemOut ) ; 
 deletionMapString = deletionMap.toString(); //Made string to pass back to report generation later set back to map.
 result = buffer.toString( "UTF-8" ).trim() ;
+
+
 returnArray.add(result);
 returnArray.add(deletionMapString);
        return returnArray; //Return array to return both console output and delted machine hashmap values.
