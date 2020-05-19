@@ -41,20 +41,33 @@ Exclusion is important however should be used sparingly. It is advised excluded 
 All deletion options except "Offline nodes" require additional information which can be entered further down the form. 
 
 ### Bestellen Efficiency Calculation
-It is a longer-term goal to create a measure to show when a dynamic machine is inefficient (time to connect, cloud size compared to VM size etc) however that involves getting machine hardware details for each machine which greatly increases time to run and ironically the plugins efficiency. As a result the plugin offers a bespoke deletion option to use when along side a call or check on your clouds capacity (if your chosen cloud supports it) that will clear X amount of machines (User specified in config) when ran. The order is as follows. Offline machines -> Idle machines (24 hours) -> Long Connect time Machines (15 minutes).
+It is a longer-term goal to create a measure to show when a dynamic machine is inefficient (time to connect, cloud size compared to VM size etc) however this is a metric that I want to develop carefully. Below you can see the current equation that I am testing. As a result the plugin offers a bespoke deletion option to use when along side a call or check on your clouds capacity (if your chosen cloud supports it) that will clear X amount of machines (User specified in config) when ran. The order is as follows. Offline machines -> Idle machines (24 hours) -> Long Connect time Machines (15 minutes). If there is no specified amount the plugin will delete as many as it can find. 
+
+```
+Efficiency Rating = (Time online / times used) x (GB size / Cloud size) /100
+```
+
+| Range.        | Efficiency Rating     |
+| ------------- |:---------------------:|
+| 0 - 2         |  Extremely Efficient  |
+| 2 - 4         |  Efficient            |
+| 4 - 6         |  In-Efficient         |
+| 6 - 8         |  Very in-efficient    |
+| 8 - 10+       | Extremely in-efficient|
+
+
 
 
 ### Amazon EC2
 Amazon EC2 uses the return values from each to delete to evaluate a successful deletion. The EC2 delete uses the aws CLI and will install in on unix systems if not found and will configure with the parameters passed through. If aws CLI is run the plugin assumes it is configured already. 
 
-Currently the code supports single instance creation but not multiple instances that are generated at once.
+Currently the code supports single instance creation but not multiple instances that are generated due to JSON parsing. This is noted for future work.
 
 ### Report generation
 If report generation has been set to yes it is advisable that you also archive the result using the archive artefact plugin. All reports are saved in the job workspace with the most recent run in the "latestReport" folder and previous runs in the "previousReports". Setup for archiving is below:
 
 ![Archive Setup](https://i.ibb.co/x7qJXWz/Screenshot-2020-05-12-at-13-39-52.png)
 
-
-
+Reports are supplemented with a deleiton graph which will be generated once over two pieces of data are stored. The graph shows up to the previous 10 runs.
 
 
