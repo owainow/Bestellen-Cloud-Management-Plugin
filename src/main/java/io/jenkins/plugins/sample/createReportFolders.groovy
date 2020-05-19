@@ -41,7 +41,7 @@ class moveReports {
  executeMakeNew.consumeProcessOutput(System.out, System.err)
  
  def makePrevious=("mkdir -p ${previousReportDirectory}") //Create the directory to store previous runs if doesnt already exist.
- def executeMakePrevious = (makekPrevious).execute()
+ def executeMakePrevious = (makePrevious).execute()
  executeMakePrevious.consumeProcessOutput(System.out, System.err)
  
         }
