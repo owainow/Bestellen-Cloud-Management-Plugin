@@ -71,8 +71,9 @@ Within the JSON config form if you wanted to get the machines at the following a
 ![HTTPConfig](https://i.ibb.co/bgty0KR/Screenshot-2020-05-19-at-18-37-58.png)
 
 It is advised although not essential that you set credentials binding up as shown below in order to hash your passwords and usernames as the password fields on protect input. The password fields are still essential to fill with the data you woud like to use.
+To use bind credentials with Bestellen the variables much always be set to the same as below, apiUsername and apiPassword.
 
-![BindCredsConfig](https://i.ibb.co/0hn0TjH/Screenshot-2020-05-19-at-18-48-57.png)
+![BindCredsConfig](https://ibb.co/HpsTR1M)
 
 ### Report generation
 If report generation has been set to yes it is advisable that you also archive the result using the archive artefact plugin. All reports are saved in the job workspace with the most recent run in the "latestReport" folder and previous runs in the "previousReports". Setup for archiving is below:
