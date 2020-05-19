@@ -269,7 +269,7 @@ if(newReportDirectory.isDirectory()) {
          
        
          
-           if (previousDeletes.size() >= 9){
+           if (previousDeletes.size() >= 10){
          
          previousDeletes.remove(previousDeletes.size() - 1 ); //Ensuring that the deletion file does not exceed 10 to ensure easy readability.
          }
