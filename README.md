@@ -64,6 +64,16 @@ Amazon EC2 uses the return values from each to delete to evaluate a successful d
 
 Currently the code supports single instance creation but not multiple instances that are generated due to JSON parsing. This is noted for future work.
 
+### Private Cloud Support / HTTP Requests
+This plugin has been built to be as applicable to clouds that support HTTP requests as possible in order to get and delete machines.
+Within the JSON config form if you wanted to get the machines at the following address: https://my-json-server.typicode.com/owainow/privateAPI/machines and delete using the key parameter the configuration would be as below:
+
+![HTTPConfig](https://i.ibb.co/bgty0KR/Screenshot-2020-05-19-at-18-37-58.png)
+
+It is advised although not essential that you set credentials binding up as shown below in order to hash your passwords and usernames as the password fields on protect input. The password fields are still essential to fill with the data you woud like to use.
+
+![HTTPConfig](https://i.ibb.co/0hn0TjH/Screenshot-2020-05-19-at-18-48-57.png" alt="Screenshot-2020-05-19-at-18-48-57)
+
 ### Report generation
 If report generation has been set to yes it is advisable that you also archive the result using the archive artefact plugin. All reports are saved in the job workspace with the most recent run in the "latestReport" folder and previous runs in the "previousReports". Setup for archiving is below:
 
