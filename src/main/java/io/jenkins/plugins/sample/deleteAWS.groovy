@@ -83,13 +83,13 @@ def deleteNode(def slave, excludeArray,safeType){
                                    
                                 if(aSlave.name.equals(slave)){
                          aSlave.getComputer().setTemporarilyOffline(true,null); //Set node as offline for saftey 
-                         println("Setting {$slave} to offline for saftey.")
+                         println("Setting ${slave} to offline for saftey.")
                          aSlave.getComputer().doDoDelete(); // Delete the node from Jenkins
-                             println("Jenkins node {$slave} deleted.")
+                             println("Jenkins node ${slave} deleted.")
                              }
                                 }
-                       def procDelete = "/usr/local/bin/aws ec2 terminate-instances --instance-ids ${id} --output json".execute().text
-                       def Returnjson = new groovy.json.JsonSlurper().parseText(procDelete)
+                        procDelete = "/usr/local/bin/aws ec2 terminate-instances --instance-ids ${id} --output json".execute().text
+                        Returnjson = new groovy.json.JsonSlurper().parseText(procDelete)
                     
                       key = Returnjson.TerminatingInstances.CurrentState.Code
                      Firstkey = Returnjson.TerminatingInstances.CurrentState.Code
@@ -115,18 +115,29 @@ def deleteNode(def slave, excludeArray,safeType){
                     
                       
                        }
+                       else if (safeType == "false"){
+                           for (aSlave in hudson.model.Hudson.instance.slaves) {
+                                   
+                                if(aSlave.name.equals(slave)){
+                                    println("Would be setting $slave to offline for saftey.")
+                                     println(" Next the Jenkins node $slave would be deleted.")
+                                    println("Fiinally executing /usr/local/bin/aws ec2 terminate-instances --instance-ids ${id} --output json")
+                                    println("Here the return code of the call would be returned and checked to see whether the machine was actually terminated.")
+                                    delSuccess = true;
+                                 }
+                                }
+                       }
+                       
                       }
                        
                        else {
                                println ("=====================================================")
-                              
-                              
-                    
-                           println("Slave: " +slave +" could not be matched in the cloud")
-                                   println("It does meet the deletion requirements however is unable to be deleted")
+                                                           
+                            println("Slave: " +slave +" could not be matched in the cloud")
+                            println("It does meet the deletion requirements however is unable to be deleted")
                             println("It is possible that this is an Orpaned VM and requires manual investigation.")
                            delSuccess = false;
-                           s
+                           
                        }
                        return delSuccess;
 
