@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <groupId>io.jenkins.plugins</groupId>
-    <artifactId>Bestellen</artifactId>
+    <artifactId>bestellen-cloud-management</artifactId>
     <version>1</version>
     <packaging>hpi</packaging>
     <properties>
