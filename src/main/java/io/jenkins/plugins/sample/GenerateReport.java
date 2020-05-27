@@ -153,13 +153,13 @@ if(newReportDirectory.isDirectory()) {
       System.out.println("It would appear keyValuePairs is empty. This is most likley as no machines were deleted.");
     }
        }
-    File deleteFile = new File("machinesDeleted.txt"); //DEPRECATED GOING TO REPLACE with the below file
+    File deleteFile = new File(workspaceString+"/machinesDeleted.txt"); //DEPRECATED GOING TO REPLACE with the below file
    boolean createDeleteFile = deleteFile.createNewFile();
     if (!createDeleteFile) {
     println("Document machinesDeleted.txt already exists.");
      }
     
-     File previousFile = new File("previousDelete.txt");
+     File previousFile = new File(workspaceString+"/previousDelete.txt");
    boolean createPreviousFile= previousFile.createNewFile();
     if (!createPreviousFile) {
     println("Document previousDelete.txt already exists.");
@@ -274,7 +274,7 @@ if(newReportDirectory.isDirectory()) {
          previousDeletes.remove(previousDeletes.size() - 1 ); //Ensuring that the deletion file does not exceed 10 to ensure easy readability.
          }
          previousDeletes.add(0,deleteNumber); //Add latest run at the top of the file.
-       PrintWriter writeNew = new PrintWriter("previousDelete.txt", "UTF-8");
+       PrintWriter writeNew = new PrintWriter(previousFile, "UTF-8");
        
         for (int number : previousDeletes) {
              
@@ -365,7 +365,7 @@ if(newReportDirectory.isDirectory()) {
          
       }
         
-     PrintWriter writer = new PrintWriter("machinesDeleted.txt", "UTF-8");
+     PrintWriter writer = new PrintWriter(deleteFile, "UTF-8");
        writer.println( String.valueOf(deleteNumber) );
         writer.close();
             return title;
