@@ -143,10 +143,7 @@ public class Bestellen extends Builder implements SimpleBuildStep {
         if(!apiUsername.isEmpty()){
           listener.getLogger().println("API Username: " + apiUsername);
         }
-        if( !apiPassword.isEmpty()){
-          
-            listener.getLogger().println("API Password has been set: "+apiPassword);
-        }
+       
      }
          if (deleteType.equals("efficient")){
           listener.getLogger().println("Deletion amount has been set to: " + vmCount );
@@ -195,7 +192,7 @@ public class Bestellen extends Builder implements SimpleBuildStep {
      
 
 
-@Symbol("greet")
+@Symbol("Bestellen")
     @Extension
 public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 

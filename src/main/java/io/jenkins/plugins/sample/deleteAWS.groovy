@@ -256,7 +256,7 @@ else{
 
                       if (i < newvmCount){
                  println('================================================================= ')
-                 println("Continuing to now delete the slaves that have been idle for over 900ms (15 minutes).")
+                 println("Continuing to now delete the slaves with connection times over 900ms (15 minutes).")
                  println('================================================================= ')
                     for (aSlave in hudson.model.Hudson.instance.slaves) {
                      
