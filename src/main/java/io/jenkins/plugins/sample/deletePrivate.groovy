@@ -187,7 +187,7 @@ def selection(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsern
                   slaveList.add(aSlave.name)
                    
                  }   
-                 deleteNode(excludeArray,json,jsonName,jsonDeleteParam,fetchAPI,deleteType,Integer.MAX_VALUE,apiUsername,apiPassword,safeType);
+                 deleteNode(excludeArray,jsonName,jsonDeleteParam,json,fetchAPI,deleteType,Integer.MAX_VALUE,apiUsername,apiPassword,safeType);
          }
      }
      
