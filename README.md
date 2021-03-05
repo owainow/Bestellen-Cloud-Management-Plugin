@@ -80,6 +80,6 @@ If report generation has been set to yes it is advisable that you also archive t
 
 ![Archive Setup](https://i.ibb.co/x7qJXWz/Screenshot-2020-05-12-at-13-39-52.png)
 
-Reports are supplemented with a deleiton graph which will be generated once over two pieces of data are stored. The graph shows up to the previous 10 runs.
+Reports are supplemented with a deletion graph which will be generated once over two pieces of data are stored. The graph shows up to the previous 10 runs.
 
 
