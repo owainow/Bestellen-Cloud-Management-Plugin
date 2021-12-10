@@ -18,7 +18,7 @@ Contact me for any questions or queries:
 - https://www.linkedin.com/in/oow/
 
 ## How to Contribute
-Bestellen is currently closed for contribution until June. My submission date is the 29th of May 2020. Once this has passed contributions are welcome through any contribution methods through the repository. 
+Bestellen is currently closed for contribution. Pull requests are welcome should any critical changes be needed.
 
 ### Important:
 Pending import into main JenkinsCI repository. The current repository is: https://github.com/owainow/Bestellen_Cloud_Management_Jenkins_Plugin
@@ -41,7 +41,7 @@ Exclusion is important however should be used sparingly. It is advised excluded 
 All deletion options except "Offline nodes" require additional information which can be entered further down the form. 
 
 ### Bestellen Efficiency Calculation
-It is a longer-term goal to create a measure to show when a dynamic machine is inefficient (time to connect, cloud size compared to VM size etc) however this is a metric that I want to develop carefully. Below you can see the current equation that I am testing. As a result the plugin offers a bespoke deletion option to use when along side a call or check on your clouds capacity (if your chosen cloud supports it) that will clear X amount of machines (User specified in config) when ran. The order is as follows. Offline machines -> Idle machines (24 hours) -> Long Connect time Machines (15 minutes). If there is no specified amount the plugin will delete as many as it can find. 
+It is a longer-term goal to create a bullet-proof measure to show when a dynamic machine is inefficient (time to connect, cloud size compared to VM size etc) however this is a metric that I want to develop carefully. Below you can see the current equation that I am testing. As a result the plugin offers a bespoke deletion option to use when along side a call or check on your clouds capacity (if your chosen cloud supports it) that will clear X amount of machines (User specified in config) when ran. The order is as follows. Offline machines -> Idle machines (24 hours) -> Long Connect time Machines (15 minutes). If there is no specified amount the plugin will delete as many as it can find. 
 
 ```
 Efficiency Rating = (Time online / times used) x (GB size / Cloud size (GB)) /100
