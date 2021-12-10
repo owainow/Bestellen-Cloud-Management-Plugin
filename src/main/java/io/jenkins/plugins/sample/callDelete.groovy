@@ -47,21 +47,21 @@ class GetNodes {
 
 def loopnodes(exclude,cloudType,deleteType,deleteLabel,vmCount,fetchAPI,apiUsername,apiPassword,jsonName,jsonDeleteParam,awsID,awsKey,awsRegion,workspace,safeType){
     
-  println('==================== Printing ALL SYSTEM SLAVES ====================');
+  println('==================== Printing ALL SYSTEM NODES ====================');
 
-        for (aSlave in hudson.model.Hudson.instance.slaves) { //First instance of hudson to loop through nodes. aSlave is the each slave in Jenkins.
+        for (aNode in hudson.model.Hudson.instance.nodes) { //First instance of hudson to loop through nodes. aNode is the each node in Jenkins.
 
-  println('Name: ' + aSlave.name);
-  println('getLabelString: ' + aSlave.getLabelString());
- println('getNumExectutors: ' + aSlave.getNumExecutors());
-  println('getRemoteFS: ' + aSlave.getRemoteFS());
-   println('getMode: ' + aSlave.getMode());
-  println('getRootPath: ' + aSlave.getRootPath());
-   println('getDescriptor: ' + aSlave.getDescriptor());
-   println('getComputer: ' + aSlave.getComputer());
-  println('\tcomputer.isAcceptingTasks: ' + aSlave.getComputer().isAcceptingTasks());
-  println('\tcomputer.getConnectTime: ' + aSlave.getComputer().getConnectTime());
-   println('\tcomputer.isOffline: ' + aSlave.getComputer().isOffline());
+  println('Name: ' + aNode.name);
+  println('getLabelString: ' + aNode.getLabelString());
+ println('getNumExectutors: ' + aNode.getNumExecutors());
+  println('getRemoteFS: ' + aNode.getRemoteFS());
+   println('getMode: ' + aNode.getMode());
+  println('getRootPath: ' + aNode.getRootPath());
+   println('getDescriptor: ' + aNode.getDescriptor());
+   println('getComputer: ' + aNode.getComputer());
+  println('\tcomputer.isAcceptingTasks: ' + aNode.getComputer().isAcceptingTasks());
+  println('\tcomputer.getConnectTime: ' + aNode.getComputer().getConnectTime());
+   println('\tcomputer.isOffline: ' + aNode.getComputer().isOffline());
      println('================================================================== ');
      
      }
