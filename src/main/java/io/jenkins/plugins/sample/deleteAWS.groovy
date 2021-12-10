@@ -58,34 +58,34 @@ def FirstReturnCode;
 def SecondReturnCode;
 def isUnix;
    
-def deleteNode(def slave, excludeArray,safeType){
+def deleteNode(def node, excludeArray,safeType){
     
-          if (excludeArray.contains(slave)){
+          if (excludeArray.contains(node)){
                        println ("=====================================================")
-        println("The machine "+slave+" has been entered in the exclude list and will not be deleted.")
+        println("The machine "+node+" has been entered in the exclude list and will not be deleted.")
         delSuccess = false;
              }
              
-          else if (json.find{it.Name.Value==[[slave]]}){ //While looping json data if that value matches the slave name passed through
+          else if (json.find{it.Name.Value==[[node]]}){ //While looping json data if that value matches the node name passed through
               
                     println ("=====================================================")
-                         String id = json.find{it.Name.Value==[[slave]]}.Instance
+                         String id = json.find{it.Name.Value==[[node]]}.Instance
                           id = id.replaceAll("\\[", "").replaceAll("\\]","");
-                          deletionMap = deletionMap+[(slave):(id)]
-                        println ("Instance Name is: " + slave + " Instance ID is: " + id)
+                          deletionMap = deletionMap+[(node):(id)]
+                        println ("Instance Name is: " + node + " Instance ID is: " + id)
                         
                          println('Removing node from Jenkins...');
             
                         println ("Now running /usr/local/bin/aws ec2 terminate-instances --instance-ids ${id} --output json")
 
                         if (safeType == "true"){
-                           for (aSlave in hudson.model.Hudson.instance.slaves) {
+                           for (aNode in hudson.model.Hudson.instance.nodes) {
                                    
-                                if(aSlave.name.equals(slave)){
-                         aSlave.getComputer().setTemporarilyOffline(true,null); //Set node as offline for saftey 
-                         println("Setting ${slave} to offline for saftey.")
-                         aSlave.getComputer().doDoDelete(); // Delete the node from Jenkins
-                             println("Jenkins node ${slave} deleted.")
+                                if(aNode.name.equals(node)){
+                         aNode.getComputer().setTemporarilyOffline(true,null); //Set node as offline for saftey 
+                         println("Setting ${node} to offline for saftey.")
+                         aNode.getComputer().doDoDelete(); // Delete the node from Jenkins
+                             println("Jenkins node ${node} deleted.")
                              }
                                 }
                         procDelete = "/usr/local/bin/aws ec2 terminate-instances --instance-ids ${id} --output json".execute().text
@@ -116,11 +116,11 @@ def deleteNode(def slave, excludeArray,safeType){
                       
                        }
                        else if (safeType == "false"){
-                           for (aSlave in hudson.model.Hudson.instance.slaves) {
+                           for (aNode in hudson.model.Hudson.instance.nodes) {
                                    
-                                if(aSlave.name.equals(slave)){
-                                    println("Would be setting $slave to offline for saftey.")
-                                     println(" Next the Jenkins node $slave would be deleted.")
+                                if(aNode.name.equals(node)){
+                                    println("Would be setting $node to offline for saftey.")
+                                     println(" Next the Jenkins node $node would be deleted.")
                                     println("Fiinally executing /usr/local/bin/aws ec2 terminate-instances --instance-ids ${id} --output json")
                                     println("Here the return code of the call would be returned and checked to see whether the machine was actually terminated.")
                                     delSuccess = true;
@@ -133,7 +133,7 @@ def deleteNode(def slave, excludeArray,safeType){
                        else {
                                println ("=====================================================")
                                                            
-                            println("Slave: " +slave +" could not be matched in the cloud")
+                            println("Node: " +node +" could not be matched in the cloud")
                             println("It does meet the deletion requirements however is unable to be deleted")
                             println("It is possible that this is an Orpaned VM and requires manual investigation.")
                            delSuccess = false;
@@ -187,9 +187,9 @@ else{
    if (deleteType == "offline" ) {
        println('==================== Deletion Option of Offline VMs Commencing ====================');
                   
-            for (aSlave in hudson.model.Hudson.instance.slaves) {
-                if (aSlave.getComputer().isOffline() == true){
-                deleteNode(aSlave.name,excludeArray,safeType);
+            for (aNode in hudson.model.Hudson.instance.nodes) {
+                if (aNode.getComputer().isOffline() == true){
+                deleteNode(aNode.name,excludeArray,safeType);
            
                  }   
          }
@@ -198,9 +198,9 @@ else{
         
   else if (deleteType == "busy") {
       println('==================== Deletion Option of VMs Not Accepting Tasks Commencing ====================');
-        for (aSlave in hudson.model.Hudson.instance.slaves) {
-                if (aSlave.getComputer().isAcceptingTasks() == false){
-                   deleteNode(aSlave.name,excludeArray,safeType);
+        for (aNode in hudson.model.Hudson.instance.nodes) {
+                if (aNode.getComputer().isAcceptingTasks() == false){
+                   deleteNode(aNode.name,excludeArray,safeType);
                  }   
          }
      }
@@ -214,19 +214,19 @@ else{
                 int newvmCount = vmCount as Integer
               
                println('================================================================= ')
-               println("Starting to delete the slaves that are currently offline.")
+               println("Starting to delete the nodes that are currently offline.")
                println('================================================================= ')
                
-              for (aSlave in hudson.model.Hudson.instance.slaves) {
+              for (aNode in hudson.model.Hudson.instance.nodes) {
                    if (i < newvmCount){
-                if (aSlave.getComputer().isOffline() == true && i < newvmCount ){
-                 status = deleteNode(aSlave.name,excludeArray,safeType);
+                if (aNode.getComputer().isOffline() == true && i < newvmCount ){
+                 status = deleteNode(aNode.name,excludeArray,safeType);
                    if (status == true){
                           i ++
                           println("Machines deleted so far: " + i)
                          }
                          else {
-                             println("Deletion of "+ aSlave.name + " failed!")
+                             println("Deletion of "+ aNode.name + " failed!")
                              println("Machines deleted so far: " + i)
                          }
             }
@@ -236,18 +236,18 @@ else{
        
             if (i < newvmCount){
                    println('================================================================= ')
-                 println("Continuing to now delete the slaves that have been idle for over 86400ms (24 hours).")
+                 println("Continuing to now delete the nodes that have been idle for over 86400ms (24 hours).")
                  println('================================================================= ')
-                for (aSlave in hudson.model.Hudson.instance.slaves) {
+                for (aNode in hudson.model.Hudson.instance.nodes) {
                       
-                    if (aSlave.getComputer().getIdleStartMilliseconds() > 86400 && i < newvmCount) {
-                    status =  deleteNode(aSlave.name,excludeArray,safeType);
+                    if (aNode.getComputer().getIdleStartMilliseconds() > 86400 && i < newvmCount) {
+                    status =  deleteNode(aNode.name,excludeArray,safeType);
                         if (status == true){
                           i ++
                           println("Machines deleted so far: " + i)
                          }
                          else {
-                             println("Deletion of "+ aSlave.name + " failed!")
+                             println("Deletion of "+ aNode.name + " failed!")
                              println("Machines deleted so far: " + i)
                          }
                    }
@@ -256,18 +256,18 @@ else{
 
                       if (i < newvmCount){
                  println('================================================================= ')
-                 println("Continuing to now delete the slaves with connection times over 900ms (15 minutes).")
+                 println("Continuing to now delete the nodes with connection times over 900ms (15 minutes).")
                  println('================================================================= ')
-                    for (aSlave in hudson.model.Hudson.instance.slaves) {
+                    for (aNode in hudson.model.Hudson.instance.nodes) {
                      
-                    if (aSlave.getComputer().getConnectTime() > 900 && i < newvmCount) {
-                         status = deleteNode(aSlave.name,excludeArray,safeType);
+                    if (aNode.getComputer().getConnectTime() > 900 && i < newvmCount) {
+                         status = deleteNode(aNode.name,excludeArray,safeType);
                            if (status == true){
                           i ++
                           println("Machines deleted so far: " + i)
                          }
                          else {
-                             println("Deletion of "+ aSlave.name + " failed!")
+                             println("Deletion of "+ aNode.name + " failed!")
                              println("Machines deleted so far: " + i)
                          }
                    }
@@ -288,12 +288,12 @@ else{
       else if (deleteType == "label") {
           println('==================== Deletion Option of Label: '+ deleteLabel + ' Commencing ====================');
              if (deleteLabel == null){
-                  println('No slave label has been entered please re-visit your job configuration');
+                  println('No node label has been entered please re-visit your job configuration');
              }
               
-               for (aSlave in hudson.model.Hudson.instance.slaves) {
-                if (aSlave.getLabelString().equals(deleteLabel)){
-                    deleteNode(aSlave.name,excludeArray,safeType);
+               for (aNode in hudson.model.Hudson.instance.nodes) {
+                if (aNode.getLabelString().equals(deleteLabel)){
+                    deleteNode(aNode.name,excludeArray,safeType);
             
                  }   
          }
